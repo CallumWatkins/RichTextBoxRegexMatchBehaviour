@@ -68,7 +68,7 @@ namespace RTB.Behaviours
         {
             var behaviour = (RichTextBoxRegexMatchBehaviour)d;
             var newDelay = (int)e.NewValue;
-            if (newDelay == 0)
+            if (newDelay <= 0)
             {
                 if (behaviour._delayedTextChangedTimer != null)
                 {
@@ -138,8 +138,13 @@ namespace RTB.Behaviours
         /// </summary>
         private void RichTextBoxOnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_delayedTextChangedTimer == null)
+            if (TextChangedDelay < 0)
             {
+                // Manual only
+            }
+            else if (_delayedTextChangedTimer == null)
+            {
+                // No delay
                 RestyleDocument();
             }
             else
@@ -192,7 +197,7 @@ namespace RTB.Behaviours
         /// <summary>
         /// Rebuild the document without any existing styles. Apply styling to text that matches the regular expression.
         /// </summary>
-        private void RestyleDocument()
+        public void RestyleDocument()
         {
             // Remove the TextChanged event handler to prevent the changes made here from triggering it
             AssociatedObject.TextChanged -= RichTextBoxOnTextChanged;
